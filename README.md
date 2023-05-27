@@ -1,2 +1,2 @@
 # FizzBuzz
-Technical Test for Leboncoin
+Technical Test submission for Leboncoin
