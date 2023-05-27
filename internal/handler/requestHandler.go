@@ -43,13 +43,9 @@ func GetFizzBuzz(w http.ResponseWriter, r *http.Request) {
 	str1, str2 := r.URL.Query().Get("str1"), r.URL.Query().Get("str2")
 
 	res := service.FizzBuzz(int1, int2, lim, str1, str2)
-<<<<<<< HEAD
 
 	// Record call
 	data.RecordFizzBuzzCall(int1, int2, lim, str1, str2)
-=======
-	spew.Dump(res)
->>>>>>> 42ea955 (feat: :hammer: fizzbuzz ok, WIP stats)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(res))
