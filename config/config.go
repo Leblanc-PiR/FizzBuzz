@@ -43,4 +43,8 @@ func Init() {
 	if DBFilename == "" {
 		DBFilename = "db_fizzbuzz.csv"
 	}
+
+	if HttpPort == 0 {
+		HttpPort = 9000
+	}
 }
