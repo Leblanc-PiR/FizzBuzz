@@ -46,5 +46,12 @@ func Init() {
 
 	if HttpPort == 0 {
 		HttpPort = 9000
+		log.Printf("setting default server port as: 9000")
+	}
+
+	// DB
+	DBFilename = os.Getenv("DB_FILENAME")
+	if DBFilename == "" {
+		DBFilename = "db_fizzbuzz.csv"
 	}
 }
