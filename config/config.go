@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -9,12 +8,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Defining config vars
 var (
 	DBFilename string
 	Env        string
 	HttpPort   int
 )
 
+// Init initialises env vars
 func Init() {
 	//Loading data from .env file or data (AWS and such...)
 	err := godotenv.Load()
@@ -30,28 +31,15 @@ func Init() {
 
 	// HttpPort
 	if HttpPort, err = strconv.Atoi(os.Getenv("SERVER_HTTP_PORT")); err != nil {
-		log.Fatal(fmt.Errorf("missing or unreadable server port from env: %w", err))
-	}
+		log.Println("Missing or unreadable server port from .env")
 
-	if HttpPort == 0 {
 		HttpPort = 9000
-		log.Printf("setting default server port as: 9000")
+		log.Printf("Setting default server port as: %d", HttpPort)
 	}
 
-	// DB
-	DBFilename = os.Getenv("DB_FILENAME")
+	// "DB"
+	DBFilename = os.Getenv("DB_FILENAME") // Could be DB connection, made it lightweight.
 	if DBFilename == "" {
-		DBFilename = "db_fizzbuzz.csv"
-	}
-
-	if HttpPort == 0 {
-		HttpPort = 9000
-		log.Printf("setting default server port as: 9000")
-	}
-
-	// DB
-	DBFilename = os.Getenv("DB_FILENAME")
-	if DBFilename == "" {
-		DBFilename = "db_fizzbuzz.csv"
+		DBFilename = "db_fizzbuzz.json"
 	}
 }

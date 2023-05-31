@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -57,18 +58,30 @@ func main() {
 	r.Get("/fizzbuzz", handler.GetFizzBuzz)
 
 	// Stats (could be secured behind some BasicAuth at least)
-	// r.Get("/stats", Stats)
+	r.Get("/stats", handler.GetStats)
 
 	// --- LOGS ---
-	log.Printf("Server strating on port %d...\n", config.HttpPort)
+	log.Printf("Server starting on port %d...\n", config.HttpPort)
 	log.Printf("Env: %s\n", config.Env)
 
 	// --- "DB" ---
-	// Creating the simplest "DB": a csv file as I don't have time to implement a Dockerized DB and using squirrel.
-	data.InitialisingPseudoDB(config.DBFilename)
+	// Creating the simplest "DB": a json file.
+	// As implementing a Dockerized DB and using squirrel would have been time consuming.
+	data.InitialisingDB(config.DBFilename)
+
+	// ServerErrors channel
+	serverErrors := make(chan error, 1)
 
 	// Launching server
-	if err := http.ListenAndServe(s.Addr, s.Handler); err != nil {
-		log.Fatal(fmt.Errorf("server seemingly crashed, more on that: %w", err))
+	go func() {
+		serverErrors <- http.ListenAndServe(s.Addr, s.Handler)
+	}()
+
+	// Softer crash
+	err := <-serverErrors
+	if err != nil {
+		log.Panic(fmt.Errorf("server seemingly crashed, more on that: %w", err))
+		os.Exit(1)
 	}
+
 }

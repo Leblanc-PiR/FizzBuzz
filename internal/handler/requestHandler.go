@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -8,6 +9,12 @@ import (
 	"github.com/Leblanc-PiR/FizzBuzz/internal/data"
 	"github.com/Leblanc-PiR/FizzBuzz/internal/service"
 )
+
+// exposedHighestHitsRequest respresent the answer of /stats endpoint
+type exposedHighestHitsRequest struct {
+	FormattedRequest string `json:"formattedRequest"`
+	Hits             int    `json:"hits"`
+}
 
 // Health allows user to check at any time that the server is up and running (httpCode 200)
 func Health(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +30,9 @@ func GetFizzBuzz(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Get ints
-	int1, int2, lim = GetUrlInt(w, r, "int1"), GetUrlInt(w, r, "int2"), GetUrlInt(w, r, "limit")
+	int1, int2, lim = getUrlInt(w, r, data.Int1ParamStr),
+		getUrlInt(w, r, data.Int2ParamStr),
+		getUrlInt(w, r, data.LimitParamStr)
 
 	if (int1 < 0 || int1 > lim) ||
 		(int2 < 0 || int2 > lim) ||
@@ -40,7 +49,8 @@ func GetFizzBuzz(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get strings
-	str1, str2 := r.URL.Query().Get("str1"), r.URL.Query().Get("str2")
+	str1, str2 := r.URL.Query().Get(data.Str1ParamStr),
+		r.URL.Query().Get(data.Str2ParamStr)
 
 	res := service.FizzBuzz(int1, int2, lim, str1, str2)
 
@@ -48,18 +58,50 @@ func GetFizzBuzz(w http.ResponseWriter, r *http.Request) {
 	data.RecordFizzBuzzCall(int1, int2, lim, str1, str2)
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(res))
+
+	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(res)
 }
 
-// GetUrlInt gives int from URL param
-func GetUrlInt(w http.ResponseWriter, r *http.Request, param string) int {
+// GetStats return param of request with most hits
+func GetStats(w http.ResponseWriter, r *http.Request) {
+
+	res := []exposedHighestHitsRequest{}
+	for _, foundRequests := range data.GetHighestHitsRequestParams() {
+		newEHHR := exposedHighestHitsRequest{
+			FormattedRequest: foundRequests.FormattedRequest,
+			Hits:             foundRequests.Hits,
+		}
+		res = append(res, newEHHR)
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	exposeEncodedValues(w, res)
+}
+
+// getUrlInt obtains int from URL param
+func getUrlInt(w http.ResponseWriter, r *http.Request, param string) int {
 	strParam := r.URL.Query().Get(param)
+
+	if param == "" {
+		exposeEncodedValues(w, "no param given")
+		return -1
+	}
 
 	res, err := strconv.Atoi(strParam)
 	if err != nil {
-		w.Write([]byte(err.Error()))
-		res = -1
+		exposeEncodedValues(w, fmt.Sprintf("could not parse %s to int", strParam))
+		return -1
 	}
 
 	return res
+}
+
+// exposeEncodedValues encodes and translates any ascii code that might happen
+func exposeEncodedValues(w http.ResponseWriter, res any) {
+	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(res)
 }
