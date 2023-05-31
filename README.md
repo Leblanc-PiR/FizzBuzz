@@ -13,6 +13,8 @@ Create an `.env` from `.env.example` file if you want to specify either the ENV 
 
 Or, if you want to do it locally
 > go run main.go
+
+Workflow was integrated using builtIn GitHub tools.
 ```
 
 _(You could run it off of Docker, Kubernetes...)_
