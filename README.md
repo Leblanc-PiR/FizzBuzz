@@ -10,6 +10,9 @@ Create an `.env` from `.env.example` file if you want to specify either the ENV 
 ```
 > go build
 > ./FizzBuzz
+
+Or, if you want to do it locally
+> go run main.go
 ```
 
 _(You could run it off of Docker, Kubernetes...)_
