@@ -1,6 +1,11 @@
 # 🍾 FizzBuzz
 Technical Test submission for Leboncoin
 
+## Prerequisites
+Having go installed -> https://go.dev/doc/install
+
+If not, you can use the executable : FizzBuzz
+
 ## 🏃 Running project
 Clone it (obviously)
 Create an `.env` from `.env.example` file if you want to specify either the ENV or SERVER_HTTP_PORT...
