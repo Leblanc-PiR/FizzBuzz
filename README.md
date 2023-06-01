@@ -4,7 +4,11 @@ Technical Test submission for Leboncoin
 ## Prerequisites
 Having go installed -> https://go.dev/doc/install
 
-If not, you can use the executable : FizzBuzz
+If your already have what's needed : delete the executable FizzBuzz.
+
+`rm FizzBuzz`
+
+If not and you can't install it, you can use the executable : FizzBuzz
 
 ## 🏃 Running project
 Clone it (obviously)
