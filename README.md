@@ -30,7 +30,7 @@ Workflow was integrated using builtIn GitHub tools.
 
 _(You could run it off of Docker, Kubernetes...)_
 
-... You're all set, the server is running on specified port !
+... You're all set, the server is running on specified port ! (default `:9000`)
 
 ## 🛣️ Routes
 3 routes here:
